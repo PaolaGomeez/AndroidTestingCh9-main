@@ -1,0 +1,46 @@
+# Workflow name
+name: Android CI
+
+# Triggers: every push or pull request to main/master, or manually from the Actions tab
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Unit and Robolectric tests, debug build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # Get the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Java version used by Gradle
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      # Gradle with caching
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      # Unit tests: LoginServiceTests, ShoppingCartTests and the Robolectric tests
+      - name: Run unit tests
+        run: ./gradlew testDebugUnitTest
+
+      # Make sure the app compiles
+      - name: Build debug APK
+        run: ./gradlew assembleDebug

@@ -48,8 +48,3 @@ google-services.json
 .cxx
 local.properties
 
-# Project exclude paths
-/.github/
-/app/
-/gradle/
-/scripts/
